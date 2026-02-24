@@ -10,17 +10,17 @@ struct ContentView: View {
                 Text("FitMacro AI")
                     .font(.largeTitle)
                     .fontWeight(.bold)
-                    .foregroundColor(.red)
+                    .foregroundColor(.green)
                 
                 Text("Your Personal AI Fitness Agent")
                     .font(.subheadline)
-                    .foregroundColor(.black)
+                    .foregroundColor(.gray)
                 
                 Spacer()
                 
                 Image(systemName: "figure.strengthtraining.traditional")
                     .font(.system(size: 80))
-                    .foregroundColor(.black)
+                    .foregroundColor(.green)
                 
                 Spacer()
                 
