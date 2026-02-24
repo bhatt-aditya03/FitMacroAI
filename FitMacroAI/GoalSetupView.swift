@@ -5,6 +5,7 @@ struct GoalSetupView: View {
     @State private var currentWeight: String = ""
     @State private var targetWeight: String = ""
     @State private var selectedGoal: String = "Lose Weight"
+    @State private var navigateToFoodLog = false
     
     let goals = ["Lose Weight", "Gain Muscle", "Stay Fit"]
     
@@ -12,32 +13,26 @@ struct GoalSetupView: View {
         ScrollView {
             VStack(spacing: 24) {
                 
-                // Header
                 VStack(spacing: 8) {
                     Text("Setup Your Goal")
                         .font(.largeTitle)
                         .fontWeight(.bold)
-                    
                     Text("Tell us about yourself")
                         .font(.subheadline)
                         .foregroundColor(.gray)
                 }
                 .padding(.top, 20)
                 
-                // Weight Input Section
                 VStack(alignment: .leading, spacing: 16) {
-                    
                     Text("Your Stats")
                         .font(.headline)
                         .padding(.horizontal)
                     
-                    // Current Weight
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Current Weight (kg)")
                             .font(.caption)
                             .foregroundColor(.gray)
                             .padding(.horizontal)
-                        
                         TextField("e.g. 70", text: $currentWeight)
                             .keyboardType(.decimalPad)
                             .padding()
@@ -46,13 +41,11 @@ struct GoalSetupView: View {
                             .padding(.horizontal)
                     }
                     
-                    // Target Weight
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Target Weight (kg)")
                             .font(.caption)
                             .foregroundColor(.gray)
                             .padding(.horizontal)
-                        
                         TextField("e.g. 65", text: $targetWeight)
                             .keyboardType(.decimalPad)
                             .padding()
@@ -62,7 +55,6 @@ struct GoalSetupView: View {
                     }
                 }
                 
-                // Goal Selection
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Your Goal")
                         .font(.headline)
@@ -70,8 +62,7 @@ struct GoalSetupView: View {
                     
                     ForEach(goals, id: \.self) { goal in
                         HStack {
-                            Text(goal)
-                                .font(.body)
+                            Text(goal).font(.body)
                             Spacer()
                             if selectedGoal == goal {
                                 Image(systemName: "checkmark.circle.fill")
@@ -82,16 +73,12 @@ struct GoalSetupView: View {
                         .background(selectedGoal == goal ? Color.green.opacity(0.1) : Color(.systemGray6))
                         .cornerRadius(10)
                         .padding(.horizontal)
-                        .onTapGesture {
-                            selectedGoal = goal
-                        }
+                        .onTapGesture { selectedGoal = goal }
                     }
                 }
                 
-                // Continue Button
-                Button(action: {
-                    print("Goal set: \(selectedGoal), \(currentWeight)kg -> \(targetWeight)kg")
-                }) {
+                // NavigationLink — Continue button
+                NavigationLink(destination: FoodLogView()) {
                     Text("Continue")
                         .font(.headline)
                         .foregroundColor(.white)
@@ -105,9 +92,13 @@ struct GoalSetupView: View {
                 
             }
         }
+        .navigationTitle("Your Goals")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
 #Preview {
-    GoalSetupView()
+    NavigationStack {
+        GoalSetupView()
+    }
 }
