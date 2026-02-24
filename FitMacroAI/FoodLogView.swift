@@ -1,12 +1,59 @@
 import SwiftUI
 
+// MARK: - Data Models
+struct FoodItem: Identifiable {
+    let id = UUID()
+    let name: String
+    let calories: Int
+    let protein: Double
+    let carbs: Double
+    let fat: Double
+    let servingSize: String
+}
+
+struct FoodAnalysisRequest: Codable {
+    let food_description: String
+    let quantity: String
+}
+
+struct FoodAnalysisResponse: Codable {
+    let food_name: String
+    let calories: Int
+    let protein: Double
+    let carbs: Double
+    let fat: Double
+    let serving_size: String
+}
+
+// MARK: - API Service
+class FoodAPIService {
+    static let shared = FoodAPIService()
+    let baseURL = "http://127.0.0.1:8000"
+    
+    func analyzeFood(description: String, quantity: String) async throws -> FoodAnalysisResponse {
+        let url = URL(string: "\(baseURL)/analyze-food")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let body = FoodAnalysisRequest(food_description: description, quantity: quantity)
+        request.httpBody = try JSONEncoder().encode(body)
+        
+        let (data, _) = try await URLSession.shared.data(for: request)
+        return try JSONDecoder().decode(FoodAnalysisResponse.self, from: data)
+    }
+}
+
+// MARK: - Main Food Log View
 struct FoodLogView: View {
     
     @State private var foodItems: [FoodItem] = []
     @State private var showingAddFood = false
-    @State private var newFoodName: String = ""
-    @State private var newFoodCalories: String = ""
-    @State private var newFoodProtein: String = ""
+    @State private var foodDescription = ""
+    @State private var quantity = ""
+    @State private var isLoading = false
+    @State private var errorMessage = ""
+    @State private var showError = false
     
     var totalCalories: Int {
         foodItems.reduce(0) { $0 + $1.calories }
@@ -18,10 +65,13 @@ struct FoodLogView: View {
     
     var body: some View {
         VStack(spacing: 0) {
+            
+            // Summary Card
             VStack(spacing: 12) {
                 Text("Today's Log")
                     .font(.headline)
                     .foregroundColor(.white)
+                
                 HStack(spacing: 40) {
                     VStack {
                         Text("\(totalCalories)")
@@ -47,6 +97,7 @@ struct FoodLogView: View {
             .padding()
             .background(Color.green)
             
+            // Food List
             if foodItems.isEmpty {
                 VStack(spacing: 12) {
                     Spacer()
@@ -66,7 +117,7 @@ struct FoodLogView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             Text(item.name)
                                 .fontWeight(.medium)
-                            Text("\(item.calories) cal • \(String(format: "%.1f", item.protein))g protein")
+                            Text("\(item.calories) cal • \(String(format: "%.1f", item.protein))g protein • \(item.servingSize)")
                                 .font(.caption)
                                 .foregroundColor(.gray)
                         }
@@ -77,6 +128,7 @@ struct FoodLogView: View {
                 .listStyle(.plain)
             }
             
+            // Add Food Button
             Button(action: { showingAddFood = true }) {
                 HStack {
                     Image(systemName: "plus.circle.fill")
@@ -93,73 +145,125 @@ struct FoodLogView: View {
         .navigationTitle("Food Log")
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showingAddFood) {
-            AddFoodSheet(
-                foodName: $newFoodName,
-                calories: $newFoodCalories,
-                protein: $newFoodProtein
+            AIFoodInputSheet(
+                foodDescription: $foodDescription,
+                quantity: $quantity,
+                isLoading: $isLoading
             ) {
-                if let cal = Int(newFoodCalories),
-                   let pro = Double(newFoodProtein),
-                   !newFoodName.isEmpty {
-                    foodItems.append(FoodItem(name: newFoodName, calories: cal, protein: pro))
-                    newFoodName = ""
-                    newFoodCalories = ""
-                    newFoodProtein = ""
-                }
+                await addFood()
+            }
+        }
+        .alert("Error", isPresented: $showError) {
+            Button("OK") {}
+        } message: {
+            Text(errorMessage)
+        }
+    }
+    
+    func addFood() async {
+        guard !foodDescription.isEmpty else { return }
+        isLoading = true
+        
+        do {
+            let response = try await FoodAPIService.shared.analyzeFood(
+                description: foodDescription,
+                quantity: quantity.isEmpty ? "1 serving" : quantity
+            )
+            
+            let newItem = FoodItem(
+                name: response.food_name,
+                calories: response.calories,
+                protein: response.protein,
+                carbs: response.carbs,
+                fat: response.fat,
+                servingSize: response.serving_size
+            )
+            
+            await MainActor.run {
+                foodItems.append(newItem)
+                foodDescription = ""
+                quantity = ""
+                isLoading = false
                 showingAddFood = false
+            }
+        } catch {
+            await MainActor.run {
+                errorMessage = "Could not analyze food. Check your connection."
+                showError = true
+                isLoading = false
             }
         }
     }
 }
 
-struct FoodItem: Identifiable {
-    let id = UUID()
-    let name: String
-    let calories: Int
-    let protein: Double
-}
-
-struct AddFoodSheet: View {
-    @Binding var foodName: String
-    @Binding var calories: String
-    @Binding var protein: String
-    let onAdd: () -> Void
+// MARK: - AI Food Input Sheet
+struct AIFoodInputSheet: View {
+    @Binding var foodDescription: String
+    @Binding var quantity: String
+    @Binding var isLoading: Bool
+    let onAdd: () async -> Void
     
     var body: some View {
         NavigationStack {
-            VStack(spacing: 20) {
+            VStack(spacing: 24) {
+                
+                // AI Badge
+                HStack {
+                    Image(systemName: "sparkles")
+                        .foregroundColor(.green)
+                    Text("AI-Powered Analysis")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .foregroundColor(.green)
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(Color.green.opacity(0.1))
+                .cornerRadius(20)
+                
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("Food Name").font(.caption).foregroundColor(.gray)
-                    TextField("e.g. Oats", text: $foodName)
+                    Text("What did you eat?")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                    TextField("e.g. rajma chawal, dal makhani, oats", text: $foodDescription)
                         .padding()
                         .background(Color(.systemGray6))
                         .cornerRadius(10)
                 }
+                
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("Calories").font(.caption).foregroundColor(.gray)
-                    TextField("e.g. 350", text: $calories)
-                        .keyboardType(.numberPad)
+                    Text("How much? (optional)")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                    TextField("e.g. 1 katori, 2 rotis, 1 plate", text: $quantity)
                         .padding()
                         .background(Color(.systemGray6))
                         .cornerRadius(10)
                 }
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("Protein (g)").font(.caption).foregroundColor(.gray)
-                    TextField("e.g. 12", text: $protein)
-                        .keyboardType(.decimalPad)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(10)
+                
+                Button(action: {
+                    Task { await onAdd() }
+                }) {
+                    HStack {
+                        if isLoading {
+                            ProgressView()
+                                .tint(.white)
+                            Text("Analyzing...")
+                                .foregroundColor(.white)
+                        } else {
+                            Image(systemName: "sparkles")
+                            Text("Analyze & Add")
+                                .fontWeight(.semibold)
+                        }
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(isLoading ? Color.gray : Color.green)
+                    .cornerRadius(12)
                 }
-                Button(action: onAdd) {
-                    Text("Add Food")
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.green)
-                        .cornerRadius(12)
-                }
+                .disabled(isLoading || foodDescription.isEmpty)
+                
                 Spacer()
             }
             .padding()
