@@ -83,6 +83,30 @@ struct FoodLogView: View {
                             .font(.caption)
                             .foregroundColor(.white.opacity(0.8))
                     }
+                    
+                    // Progress Bar
+                    let calorieGoal = UserDefaultsManager.loadCalorieGoal()
+                    let progress = min(Double(totalCalories) / Double(calorieGoal), 1.0)
+
+                    VStack(spacing: 4) {
+                        GeometryReader { geo in
+                            ZStack(alignment: .leading) {
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(Color.white.opacity(0.3))
+                                    .frame(height: 8)
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(Color.white)
+                                    .frame(width: geo.size.width * progress, height: 8)
+                            }
+                        }
+                        .frame(height: 8)
+                        
+                        Text("\(totalCalories) / \(calorieGoal) cal")
+                            .font(.caption)
+                            .foregroundColor(.white.opacity(0.9))
+                    }
+                    .padding(.horizontal)
+                    
                     VStack {
                         Text(String(format: "%.1f g", totalProtein))
                             .font(.title)

@@ -21,4 +21,16 @@ class UserDefaultsManager {
     static func clearFoodItems() {
         UserDefaults.standard.removeObject(forKey: foodItemsKey)
     }
+    
+    // Calorie Goal
+    static let calorieGoalKey = "calorie_goal"
+
+    static func saveCalorieGoal(_ goal: Int) {
+        UserDefaults.standard.set(goal, forKey: calorieGoalKey)
+    }
+
+    static func loadCalorieGoal() -> Int {
+        let goal = UserDefaults.standard.integer(forKey: calorieGoalKey)
+        return goal == 0 ? 2000 : goal
+    }
 }

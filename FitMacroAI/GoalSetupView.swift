@@ -6,6 +6,7 @@ struct GoalSetupView: View {
     @State private var targetWeight: String = ""
     @State private var selectedGoal: String = "Lose Weight"
     @State private var navigateToFoodLog = false
+    @State private var dailyCalorieGoal: String = "2000"
     
     let goals = ["Lose Weight", "Gain Muscle", "Stay Fit"]
     
@@ -53,6 +54,19 @@ struct GoalSetupView: View {
                             .cornerRadius(10)
                             .padding(.horizontal)
                     }
+                    
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Daily Calorie Goal")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                            .padding(.horizontal)
+                        TextField("e.g. 2000", text: $dailyCalorieGoal)
+                            .keyboardType(.numberPad)
+                            .padding()
+                            .background(Color(.systemGray6))
+                            .cornerRadius(10)
+                            .padding(.horizontal)
+                    }
                 }
                 
                 VStack(alignment: .leading, spacing: 12) {
@@ -77,7 +91,6 @@ struct GoalSetupView: View {
                     }
                 }
                 
-                // NavigationLink — Continue button
                 NavigationLink(destination: FoodLogView()) {
                     Text("Continue")
                         .font(.headline)
@@ -89,7 +102,11 @@ struct GoalSetupView: View {
                 }
                 .padding(.horizontal)
                 .padding(.bottom, 30)
-                
+                .simultaneousGesture(TapGesture().onEnded {
+                    if let goal = Int(dailyCalorieGoal) {
+                        UserDefaultsManager.saveCalorieGoal(goal)
+                    }
+                })
             }
         }
         .navigationTitle("Your Goals")
