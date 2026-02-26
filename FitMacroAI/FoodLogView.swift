@@ -1,8 +1,8 @@
 import SwiftUI
 
 // MARK: - Data Models
-struct FoodItem: Identifiable {
-    let id = UUID()
+struct FoodItem: Identifiable, Codable {
+    var id: UUID = UUID()
     let name: String
     let calories: Int
     let protein: Double
@@ -47,7 +47,8 @@ class FoodAPIService {
 // MARK: - Main Food Log View
 struct FoodLogView: View {
     
-    @State private var foodItems: [FoodItem] = []
+    @State private var foodItems: [FoodItem] = UserDefaultsManager.loadFoodItems()
+    
     @State private var showingAddFood = false
     @State private var foodDescription = ""
     @State private var quantity = ""
@@ -181,6 +182,7 @@ struct FoodLogView: View {
             
             await MainActor.run {
                 foodItems.append(newItem)
+                UserDefaultsManager.saveFoodItems(self.foodItems)
                 foodDescription = ""
                 quantity = ""
                 isLoading = false
