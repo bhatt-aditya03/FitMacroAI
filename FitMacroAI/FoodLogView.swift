@@ -48,7 +48,6 @@ class FoodAPIService {
 struct FoodLogView: View {
     
     @State private var foodItems: [FoodItem] = UserDefaultsManager.loadFoodItems()
-    
     @State private var showingAddFood = false
     @State private var foodDescription = ""
     @State private var quantity = ""
@@ -59,9 +58,14 @@ struct FoodLogView: View {
     var totalCalories: Int {
         foodItems.reduce(0) { $0 + $1.calories }
     }
-    
     var totalProtein: Double {
         foodItems.reduce(0) { $0 + $1.protein }
+    }
+    var totalCarbs: Double {
+        foodItems.reduce(0) { $0 + $1.carbs }
+    }
+    var totalFat: Double {
+        foodItems.reduce(0) { $0 + $1.fat }
     }
     
     var body: some View {
@@ -73,50 +77,70 @@ struct FoodLogView: View {
                     .font(.headline)
                     .foregroundColor(.white)
                 
-                HStack(spacing: 40) {
+                // 4 Macros Row
+                HStack(spacing: 16) {
                     VStack {
                         Text("\(totalCalories)")
-                            .font(.title)
+                            .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(.white)
-                        Text("Calories")
+                        Text("Cal")
                             .font(.caption)
                             .foregroundColor(.white.opacity(0.8))
                     }
-                    
-                    // Progress Bar
-                    let calorieGoal = UserDefaultsManager.loadCalorieGoal()
-                    let progress = min(Double(totalCalories) / Double(calorieGoal), 1.0)
-
-                    VStack(spacing: 4) {
-                        GeometryReader { geo in
-                            ZStack(alignment: .leading) {
-                                RoundedRectangle(cornerRadius: 4)
-                                    .fill(Color.white.opacity(0.3))
-                                    .frame(height: 8)
-                                RoundedRectangle(cornerRadius: 4)
-                                    .fill(Color.white)
-                                    .frame(width: geo.size.width * progress, height: 8)
-                            }
-                        }
-                        .frame(height: 8)
-                        
-                        Text("\(totalCalories) / \(calorieGoal) cal")
-                            .font(.caption)
-                            .foregroundColor(.white.opacity(0.9))
-                    }
-                    .padding(.horizontal)
-                    
+                    Divider().background(Color.white.opacity(0.5)).frame(height: 35)
                     VStack {
-                        Text(String(format: "%.1f g", totalProtein))
-                            .font(.title)
+                        Text(String(format: "%.1fg", totalProtein))
+                            .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(.white)
                         Text("Protein")
                             .font(.caption)
                             .foregroundColor(.white.opacity(0.8))
                     }
+                    Divider().background(Color.white.opacity(0.5)).frame(height: 35)
+                    VStack {
+                        Text(String(format: "%.1fg", totalCarbs))
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                        Text("Carbs")
+                            .font(.caption)
+                            .foregroundColor(.white.opacity(0.8))
+                    }
+                    Divider().background(Color.white.opacity(0.5)).frame(height: 35)
+                    VStack {
+                        Text(String(format: "%.1fg", totalFat))
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                        Text("Fat")
+                            .font(.caption)
+                            .foregroundColor(.white.opacity(0.8))
+                    }
                 }
+                
+                // Progress Bar
+                let calorieGoal = UserDefaultsManager.loadCalorieGoal()
+                let progress = min(Double(totalCalories) / Double(calorieGoal), 1.0)
+                
+                VStack(spacing: 4) {
+                    GeometryReader { geo in
+                        ZStack(alignment: .leading) {
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(Color.white.opacity(0.3))
+                                .frame(height: 8)
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(Color.white)
+                                .frame(width: geo.size.width * progress, height: 8)
+                        }
+                    }
+                    .frame(height: 8)
+                    Text("\(totalCalories) / \(calorieGoal) cal")
+                        .font(.caption)
+                        .foregroundColor(.white.opacity(0.9))
+                }
+                .padding(.horizontal)
             }
             .frame(maxWidth: .infinity)
             .padding()
@@ -142,7 +166,7 @@ struct FoodLogView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             Text(item.name)
                                 .fontWeight(.medium)
-                            Text("\(item.calories) cal • \(String(format: "%.1f", item.protein))g protein • \(item.servingSize)")
+                            Text("\(item.calories) cal • P: \(String(format: "%.1f", item.protein))g • C: \(String(format: "%.1f", item.carbs))g • F: \(String(format: "%.1f", item.fat))g")
                                 .font(.caption)
                                 .foregroundColor(.gray)
                         }
@@ -233,7 +257,6 @@ struct AIFoodInputSheet: View {
         NavigationStack {
             VStack(spacing: 24) {
                 
-                // AI Badge
                 HStack {
                     Image(systemName: "sparkles")
                         .foregroundColor(.green)
@@ -272,14 +295,11 @@ struct AIFoodInputSheet: View {
                 }) {
                     HStack {
                         if isLoading {
-                            ProgressView()
-                                .tint(.white)
-                            Text("Analyzing...")
-                                .foregroundColor(.white)
+                            ProgressView().tint(.white)
+                            Text("Analyzing...").foregroundColor(.white)
                         } else {
                             Image(systemName: "sparkles")
-                            Text("Analyze & Add")
-                                .fontWeight(.semibold)
+                            Text("Analyze & Add").fontWeight(.semibold)
                         }
                     }
                     .foregroundColor(.white)
