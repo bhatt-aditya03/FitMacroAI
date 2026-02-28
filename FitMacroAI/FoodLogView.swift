@@ -28,7 +28,7 @@ struct FoodAnalysisResponse: Codable {
 // MARK: - API Service
 class FoodAPIService {
     static let shared = FoodAPIService()
-    let baseURL = "http://127.0.0.1:8000"
+    let baseURL = "https://web-production-f32bc.up.railway.app"
     
     func analyzeFood(description: String, quantity: String) async throws -> FoodAnalysisResponse {
         let url = URL(string: "\(baseURL)/analyze-food")!
