@@ -163,15 +163,40 @@ struct FoodLogView: View {
             } else {
                 List {
                     ForEach(foodItems) { item in
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(item.name)
-                                .fontWeight(.medium)
-                            Text("\(item.calories) cal • P: \(String(format: "%.1f", item.protein))g • C: \(String(format: "%.1f", item.carbs))g • F: \(String(format: "%.1f", item.fat))g")
-                                .font(.caption)
-                                .foregroundColor(.gray)
+                        HStack(spacing: 12) {
+                            ZStack {
+                                Circle()
+                                    .fill(Color.green.opacity(0.1))
+                                    .frame(width: 44, height: 44)
+                                Image(systemName: "fork.knife")
+                                    .font(.system(size: 18))
+                                    .foregroundColor(.green)
+                            }
+                            
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(item.name)
+                                    .fontWeight(.semibold)
+                                    .font(.subheadline)
+                                Text("P: \(String(format: "%.1f", item.protein))g  C: \(String(format: "%.1f", item.carbs))g  F: \(String(format: "%.1f", item.fat))g")
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+                            }
+                            
+                            Spacer()
+                            
+                            VStack {
+                                Text("\(item.calories)")
+                                    .font(.headline)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.green)
+                                Text("cal")
+                                    .font(.caption2)
+                                    .foregroundColor(.gray)
+                            }
                         }
-                        .padding(.vertical, 4)
+                        .padding(.vertical, 6)
                     }
+                    
                     .onDelete { foodItems.remove(atOffsets: $0) }
                 }
                 .listStyle(.plain)
