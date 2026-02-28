@@ -191,6 +191,14 @@ struct FoodLogView: View {
             }
             .padding()
         }
+        .onAppear {
+            if UserDefaultsManager.shouldResetForNewDay() {
+                foodItems = []
+                UserDefaultsManager.clearFoodItems()
+            }
+            UserDefaultsManager.updateLastLogDate()
+        }
+        
         .navigationTitle("Food Log")
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showingAddFood) {

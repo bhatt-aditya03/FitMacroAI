@@ -33,4 +33,21 @@ class UserDefaultsManager {
         let goal = UserDefaults.standard.integer(forKey: calorieGoalKey)
         return goal == 0 ? 2000 : goal
     }
+    
+    // Daily Reset
+        static let lastLogDateKey = "last_log_date"
+        
+        static func shouldResetForNewDay() -> Bool {
+            let today = Calendar.current.startOfDay(for: Date())
+            
+            if let savedDate = UserDefaults.standard.object(forKey: lastLogDateKey) as? Date {
+                return savedDate < today
+            }
+            return false
+        }
+        
+        static func updateLastLogDate() {
+            let today = Calendar.current.startOfDay(for: Date())
+            UserDefaults.standard.set(today, forKey: lastLogDateKey)
+        }
 }
