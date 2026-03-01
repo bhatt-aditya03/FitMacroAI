@@ -2,77 +2,83 @@ import SwiftUI
 
 struct ContentView: View {
     
+    @State private var isOnboardingComplete = UserDefaultsManager.isOnboardingComplete()
+    
     var body: some View {
-        NavigationStack {
-            ZStack {
-                // Gradient Background
-                LinearGradient(
-                    colors: [Color.green.opacity(0.8), Color.green, Color(hex: "1a7a3c")],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-                .ignoresSafeArea()
-                
-                VStack(spacing: 0) {
-                    Spacer()
+        if isOnboardingComplete {
+            NavigationStack {
+                FoodLogView()
+            }
+        } else {
+            NavigationStack {
+                ZStack {
+                    LinearGradient(
+                        colors: [Color.green.opacity(0.8), Color.green, Color(hex: "1a7a3c")],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                    .ignoresSafeArea()
                     
-                    // Logo Section
-                    VStack(spacing: 16) {
-                        ZStack {
-                            Circle()
-                                .fill(Color.white.opacity(0.2))
-                                .frame(width: 120, height: 120)
-                            Image(systemName: "figure.strengthtraining.traditional")
-                                .font(.system(size: 60))
-                                .foregroundColor(.white)
+                    VStack(spacing: 0) {
+                        Spacer()
+                        
+                        VStack(spacing: 16) {
+                            ZStack {
+                                Circle()
+                                    .fill(Color.white.opacity(0.2))
+                                    .frame(width: 120, height: 120)
+                                Image(systemName: "figure.strengthtraining.traditional")
+                                    .font(.system(size: 60))
+                                    .foregroundColor(.white)
+                            }
+                            
+                            VStack(spacing: 8) {
+                                Text("FitMacro AI")
+                                    .font(.system(size: 38, weight: .bold))
+                                    .foregroundColor(.white)
+                                Text("Your Personal AI Fitness Agent")
+                                    .font(.subheadline)
+                                    .foregroundColor(.white.opacity(0.85))
+                            }
                         }
                         
-                        VStack(spacing: 8) {
-                            Text("FitMacro AI")
-                                .font(.system(size: 38, weight: .bold))
-                                .foregroundColor(.white)
-                            Text("Your Personal AI Fitness Agent")
-                                .font(.subheadline)
-                                .foregroundColor(.white.opacity(0.85))
+                        Spacer()
+                        
+                        VStack(spacing: 12) {
+                            FeatureRow(icon: "sparkles", text: "AI-powered food analysis")
+                            FeatureRow(icon: "chart.bar.fill", text: "Track calories & macros")
+                            FeatureRow(icon: "arrow.clockwise", text: "Daily auto reset")
                         }
-                    }
-                    
-                    Spacer()
-                    
-                    // Features Section
-                    VStack(spacing: 12) {
-                        FeatureRow(icon: "sparkles", text: "AI-powered food analysis")
-                        FeatureRow(icon: "chart.bar.fill", text: "Track calories & macros")
-                        FeatureRow(icon: "arrow.clockwise", text: "Daily auto reset")
-                    }
-                    .padding(.horizontal, 30)
-                    
-                    Spacer()
-                    
-                    // Get Started Button
-                    NavigationLink(destination: GoalSetupView()) {
-                        HStack {
-                            Text("Get Started")
-                                .font(.headline)
-                                .fontWeight(.bold)
-                            Image(systemName: "arrow.right")
+                        .padding(.horizontal, 30)
+                        
+                        Spacer()
+                        
+                        NavigationLink(destination: GoalSetupView(onComplete: {
+                            UserDefaultsManager.setOnboardingComplete()
+                            isOnboardingComplete = true
+                        })) {
+                            HStack {
+                                Text("Get Started")
+                                    .font(.headline)
+                                    .fontWeight(.bold)
+                                Image(systemName: "arrow.right")
+                            }
+                            .foregroundColor(.green)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.white)
+                            .cornerRadius(16)
+                            .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
                         }
-                        .foregroundColor(.green)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.white)
-                        .cornerRadius(16)
-                        .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
+                        .padding(.horizontal, 30)
+                        .padding(.bottom, 50)
                     }
-                    .padding(.horizontal, 30)
-                    .padding(.bottom, 50)
                 }
             }
         }
     }
 }
 
-// Feature Row Component
 struct FeatureRow: View {
     let icon: String
     let text: String
@@ -97,7 +103,6 @@ struct FeatureRow: View {
     }
 }
 
-// Hex Color Extension
 extension Color {
     init(hex: String) {
         let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)

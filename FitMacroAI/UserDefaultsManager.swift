@@ -50,4 +50,15 @@ class UserDefaultsManager {
             let today = Calendar.current.startOfDay(for: Date())
             UserDefaults.standard.set(today, forKey: lastLogDateKey)
         }
+    
+    // Onboarding
+    static let onboardingKey = "is_onboarding_complete"
+
+    static func setOnboardingComplete() {
+        UserDefaults.standard.set(true, forKey: onboardingKey)
+    }
+
+    static func isOnboardingComplete() -> Bool {
+        return UserDefaults.standard.bool(forKey: onboardingKey)
+    }
 }

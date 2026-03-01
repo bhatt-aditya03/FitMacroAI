@@ -197,7 +197,10 @@ struct FoodLogView: View {
                         .padding(.vertical, 6)
                     }
                     
-                    .onDelete { foodItems.remove(atOffsets: $0) }
+                    .onDelete { indexSet in
+                        foodItems.remove(atOffsets: indexSet)
+                        UserDefaultsManager.saveFoodItems(foodItems)
+                    }
                 }
                 .listStyle(.plain)
             }

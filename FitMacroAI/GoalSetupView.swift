@@ -2,10 +2,11 @@ import SwiftUI
 
 struct GoalSetupView: View {
     
+    var onComplete: (() -> Void)? = nil
+    
     @State private var currentWeight: String = ""
     @State private var targetWeight: String = ""
     @State private var selectedGoal: String = "Lose Weight"
-    @State private var navigateToFoodLog = false
     @State private var dailyCalorieGoal: String = "2000"
     
     let goals = ["Lose Weight", "Gain Muscle", "Stay Fit"]
@@ -106,6 +107,7 @@ struct GoalSetupView: View {
                     if let goal = Int(dailyCalorieGoal) {
                         UserDefaultsManager.saveCalorieGoal(goal)
                     }
+                    onComplete?()
                 })
             }
         }
