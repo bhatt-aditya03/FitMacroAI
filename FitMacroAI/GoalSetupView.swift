@@ -4,10 +4,10 @@ struct GoalSetupView: View {
     
     var onComplete: (() -> Void)? = nil
     
-    @State private var currentWeight: String = ""
-    @State private var targetWeight: String = ""
-    @State private var selectedGoal: String = "Lose Weight"
-    @State private var dailyCalorieGoal: String = "2000"
+    @State private var currentWeight: String = UserDefaultsManager.loadCurrentWeight()
+    @State private var targetWeight: String = UserDefaultsManager.loadTargetWeight()
+    @State private var selectedGoal: String = UserDefaultsManager.loadSelectedGoal()
+    @State private var dailyCalorieGoal: String = String(UserDefaultsManager.loadCalorieGoal())
     
     let goals = ["Lose Weight", "Gain Muscle", "Stay Fit"]
     
@@ -107,8 +107,14 @@ struct GoalSetupView: View {
                     if let goal = Int(dailyCalorieGoal) {
                         UserDefaultsManager.saveCalorieGoal(goal)
                     }
+                    UserDefaultsManager.saveUserProfile(
+                        currentWeight: currentWeight,
+                        targetWeight: targetWeight,
+                        selectedGoal: selectedGoal
+                    )
                     onComplete?()
                 })
+                
             }
         }
         .navigationTitle("Your Goals")

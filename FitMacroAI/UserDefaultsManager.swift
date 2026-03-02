@@ -61,4 +61,27 @@ class UserDefaultsManager {
     static func isOnboardingComplete() -> Bool {
         return UserDefaults.standard.bool(forKey: onboardingKey)
     }
+    
+    // User Profile
+    static let currentWeightKey = "current_weight"
+    static let targetWeightKey = "target_weight"
+    static let selectedGoalKey = "selected_goal"
+
+    static func saveUserProfile(currentWeight: String, targetWeight: String, selectedGoal: String) {
+        UserDefaults.standard.set(currentWeight, forKey: currentWeightKey)
+        UserDefaults.standard.set(targetWeight, forKey: targetWeightKey)
+        UserDefaults.standard.set(selectedGoal, forKey: selectedGoalKey)
+    }
+
+    static func loadCurrentWeight() -> String {
+        return UserDefaults.standard.string(forKey: currentWeightKey) ?? ""
+    }
+
+    static func loadTargetWeight() -> String {
+        return UserDefaults.standard.string(forKey: targetWeightKey) ?? ""
+    }
+
+    static func loadSelectedGoal() -> String {
+        return UserDefaults.standard.string(forKey: selectedGoalKey) ?? "Lose Weight"
+    }
 }
