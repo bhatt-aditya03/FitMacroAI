@@ -38,3 +38,9 @@ Repo: [FitMacroAI-Backend](https://github.com/bhatt-aditya03/FitMacroAI-Backend)
 
 ## Status
 ✅ Complete — Day 15/15
+
+## Screenshots
+
+| Startup Screen | Goal Setup Screen | Food Log | Add Food |
+|----------------| ------------------| ---------| ---------|
+| ![Startup_Screen](screenshots/StartupScreen.png) | ![Goal Setup Screen](screenshots/SetupGoal.png) | ![FoodLog](screenshots/FoodLog.png) | ![Add Food](screenshots/AddFood.png)
