@@ -43,4 +43,4 @@ Repo: [FitMacroAI-Backend](https://github.com/bhatt-aditya03/FitMacroAI-Backend)
 
 | Startup Screen | Goal Setup Screen | Food Log | Add Food |
 |----------------| ------------------| ---------| ---------|
-| ![Startup Screen](screenshots/StartupScreen.png) | ![Goal Setup Screen](screenshots/SetupGoal.png) | ![FoodLog](screenshots/FoodLog.png) | ![Add Food](screenshots/AddFood.png)
+| ![Startup Screen](screenshots/Startup.png) | ![Goal Setup Screen](screenshots/SetupGoal.png) | ![FoodLog](screenshots/FoodLog.png) | ![Add Food](screenshots/AddFood.png)
