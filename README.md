@@ -102,8 +102,6 @@ Most fitness apps require users to know exact macros or search a food database. 
 ## Author
 
 **Aditya Bhatt**
-B.Tech CSE (Data Science) | 6th Semester
-iOS + AI + Backend Development
 
 ---
 
