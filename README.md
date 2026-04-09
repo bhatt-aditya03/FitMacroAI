@@ -10,6 +10,14 @@
 
 ---
 
+## 📸 Screenshots
+
+| Onboarding | Goal Setup | Food Log | Add Food | Macros Tracked |
+|-----------|-----------|---------|---------|---------------|
+| ![Onboarding](screenshots/onboarding.PNG) | ![Goal Setup](screenshots/goal_setup.PNG) | ![Food Log](screenshots/food_log_empty.PNG) | ![Add Food](screenshots/add_food.PNG) | ![Macros](screenshots/food_log.PNG) |
+
+---
+
 ## 🎯 What This Does
 
 Most fitness apps require manual food selection from a database. FitMacro AI lets you describe food naturally — "2 rotis with dal" or "1 plate rajma chawal" — and instantly returns calories, protein, carbs and fat using an AI-powered backend.
@@ -18,7 +26,7 @@ Most fitness apps require manual food selection from a database. FitMacro AI let
 
 ## ✨ Features
 
-- 🤖 Natural language food analysis via AI backend
+- 🤖 Natural language food analysis via Groq AI (llama-3.3-70b)
 - 📊 Real-time macro tracking (calories, protein, carbs, fat)
 - 🎯 Personalized calorie goals with progress bar
 - 🔄 Automatic daily reset at midnight
@@ -33,7 +41,7 @@ Most fitness apps require manual food selection from a database. FitMacro AI let
 |-------|-----------|
 | iOS Frontend | SwiftUI, Swift 5.9 |
 | API Backend | FastAPI, Python |
-| AI Analysis | OpenAI GPT |
+| AI Analysis | Groq (llama-3.3-70b-versatile) |
 | Deployment | Vercel |
 | Storage | UserDefaults |
 
@@ -41,7 +49,6 @@ Most fitness apps require manual food selection from a database. FitMacro AI let
 
 ## 📂 Project Structure
 
-\`\`\`
 FitMacroAI/
 ├── ios/                               # SwiftUI iOS app
 │   ├── FitMacroAI/
@@ -55,46 +62,45 @@ FitMacroAI/
 │   ├── main.py                        # API endpoints
 │   ├── requirements.txt               # Python dependencies
 │   ├── vercel.json                    # Vercel config
-│   └── Procfile                       # Process config
+│   └── Procfile                       # For Railway/Heroku deployment
 ├── screenshots/                       # App screenshots
 └── README.md
-\`\`\`
 
 ---
 
 ## 🚀 Run Locally
 
 ### Backend
-\`\`\`bash
+```bash
 cd backend
 pip install -r requirements.txt
 uvicorn main:app --reload
-\`\`\`
+```
 
 ### iOS App
-\`\`\`
+
 1. Open ios/FitMacroAI.xcodeproj in Xcode
 2. Select your target device or simulator
 3. Press Cmd+R to build and run
-\`\`\`
 
-> **Note:** Backend is already live at https://fit-macro-ai-backend.vercel.app — you don't need to run it locally to test the iOS app.
+> **Note:** Backend is already live at https://fit-macro-ai-backend.vercel.app — you don't need to run it locally to test the iOS app.  
+> To point the iOS app to a different backend, update `baseURL` in `FoodLogView.swift`.
 
 ---
 
 ## 📱 API Endpoint
 
-\`\`\`json
+```json
 POST https://fit-macro-ai-backend.vercel.app/analyze-food
 
 {
   "food_description": "2 rotis with dal",
   "quantity": "1 plate"
 }
-\`\`\`
+```
 
 **Response:**
-\`\`\`json
+```json
 {
   "food_name": "Roti with Dal",
   "calories": 320,
@@ -103,10 +109,10 @@ POST https://fit-macro-ai-backend.vercel.app/analyze-food
   "fat": 6.2,
   "serving_size": "1 plate"
 }
-\`\`\`
+```
 
 ---
 
 ## 👨‍💻 Author
 
-**Aditya Bhatt** — [LinkedIn](https://linkedin.com/in/bhatt-aditya03) · [GitHub](https://github.com/bhatt-aditya03)
+**Aditya Bhatt**
