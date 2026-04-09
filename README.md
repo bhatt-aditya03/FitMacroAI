@@ -46,9 +46,9 @@ Most fitness apps require manual food selection from a database. FitMacro AI let
 | Storage | UserDefaults |
 
 ---
-
 ## 📂 Project Structure
 
+```
 FitMacroAI/
 ├── ios/                               # SwiftUI iOS app
 │   ├── FitMacroAI/
@@ -65,6 +65,7 @@ FitMacroAI/
 │   └── Procfile                       # For Railway/Heroku deployment
 ├── screenshots/                       # App screenshots
 └── README.md
+```
 
 ---
 
