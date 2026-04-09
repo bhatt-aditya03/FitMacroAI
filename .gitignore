@@ -1,18 +1,8 @@
-# Python
 __pycache__/
 *.pyc
 venv/
 .env
-
-# Xcode
 *.xcuserstate
 xcuserdata/
 DerivedData/
-*.moved-aside
-*.pbxuser
-!default.pbxuser
-*.mode1v3
-!default.mode1v3
-
-# macOS
 .DS_Store
